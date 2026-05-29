@@ -81,7 +81,7 @@ public:
     settingsPath = getWorkingDirectory() +
                    QString("/Contents/Resources/SystemVar.ini");
 #else
-#ifdef HAIKU
+#if defined(HAIKU) || defined(__ANDROID__)
     settingsPath = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation) + "/SystemVar.ini";
 #else /* Generic Unix */
     // TODO: use QStandardPaths::ConfigLocation when we drop Qt4
@@ -507,6 +507,9 @@ void TEnv::setApplicationFileName(std::string appFileName) {
 #elif defined(LINUX) || defined(FREEBSD)
   if (fp.getWideName().find(L".appimage"))
     for (int i = 0; i < 2; i++) fp = fp.getParentDir();
+#elif defined(__ANDROID__)
+  if (fp.getWideName().find(L".so"))
+    fp = fp.getParentDir();
 #endif
   EnvGlobals::instance()->setApplicationFileName(fp.getName());
 }
